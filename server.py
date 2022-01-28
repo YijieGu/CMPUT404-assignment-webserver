@@ -43,19 +43,20 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                         self.path+="index.html"
                                         f= open(self.path, "r")
                                         content = f.read().strip()
-                                        contentType = "text/html"
-                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + contentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
+                                        ContentType = "text/html"
+                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
                                 elif self.path[-1]!="/":
                                         self.request.sendall(bytearray("HTTP/1.1 301 Moved Permanently Location:" + self.path + "/" + "\r\n\r\n",'utf-8')) 
                         elif os.path.isfile(self.path) == 1:
                                 f= open(self.path, "r")
                                 content= f.read().strip()
-                                if self.path[-4:] == ".css":
-                                        contentType = "text/css"
-                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + contentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
-                                elif self.path[-5:] == ".html":
-                                        contentType = "text/html"
-                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + contentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
+                                file_extension = os.path.splitext(self.path)[1] 
+                                if file_extension == ".css":
+                                        ContentType = "text/css"
+                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
+                                elif file_extension == ".html":
+                                        ContentType = "text/html"
+                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
                                 else:
                                         self.request.sendall(bytearray("HTTP/1.1 404 Not FOUND\r\n",'utf-8')) 
                         else:
