@@ -1,5 +1,6 @@
 #  coding: utf-8 
 import socketserver
+import socket
 import os
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
@@ -44,27 +45,35 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                         f= open(self.path, "r")
                                         content = f.read().strip()
                                         ContentType = "text/html"
-                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
+                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))
+                                        self.request.shutdown(socket.SHUT_WR)
                                 elif self.path[-1]!="/":
-                                        self.request.sendall(bytearray("HTTP/1.1 301 Moved Permanently Location:" + self.path + "/" + "\r\n\r\n",'utf-8')) 
+                                        self.request.sendall(bytearray("HTTP/1.1 301 Moved Permanently Location:" + self.path + "/" + "\r\n\r\n",'utf-8'))
+                                        self.request.shutdown(socket.SHUT_WR)
                         elif os.path.isfile(self.path) == 1:
                                 f= open(self.path, "r")
                                 content= f.read().strip()
                                 file_extension = os.path.splitext(self.path)[1] 
                                 if file_extension == ".css":
                                         ContentType = "text/css"
-                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
+                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))
+                                        self.request.shutdown(socket.SHUT_WR)
                                 elif file_extension == ".html":
                                         ContentType = "text/html"
-                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))                                        
+                                        self.request.sendall(bytearray("HTTP/1.1 200 OK\r\nContent-Type:" + ContentType + "\r\n\r\n" + content +"\r\n",'utf-8'))
+                                        self.request.shutdown(socket.SHUT_WR)
                                 else:
-                                        self.request.sendall(bytearray("HTTP/1.1 404 Not FOUND\r\n",'utf-8')) 
+                                        self.request.sendall(bytearray("HTTP/1.1 404 Not FOUND\r\n",'utf-8'))
+                                        self.request.shutdown(socket.SHUT_WR)
                         else:
                                 self.request.sendall(bytearray("HTTP/1.1 404 Not FOUND\r\n",'utf-8'))
+                                self.request.shutdown(socket.SHUT_WR)
                 else:
                         self.request.sendall(bytearray("HTTP/1.1 404 Not FOUND\r\n",'utf-8'))
+                        self.request.shutdown(socket.SHUT_WR)
         else:
-                self.request.sendall(bytearray("HTTP/1.1 405 Method Not ALLOWED\r\n",'utf-8'))            
+                self.request.sendall(bytearray("HTTP/1.1 405 Method Not ALLOWED\r\n",'utf-8'))
+                self.request.shutdown(socket.SHUT_WR)
         
         
 if __name__ == "__main__":
